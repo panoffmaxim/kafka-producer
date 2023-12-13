@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Validated
@@ -19,9 +16,13 @@ public class OrderMessagingController {
     private final OrderMessagingService orderMessagingService;
 
     @PostMapping
-    public ResponseEntity<String> sendOrderMessage(@RequestBody String requestMessage) {
+    public ResponseEntity<String> sendOrderMessage(
+            @RequestBody String completedOrderId,
+            @RequestBody String clientId,
+            @RequestHeader(value = "Accept-Language", defaultValue = "en-US") String acceptLanguage,
+            @RequestHeader(value = "Accept-Timezone", defaultValue = "UTC") String acceptTimezone) {
         log.info("Send orderId to kafka");
-        orderMessagingService.sendOrderMessage(requestMessage);
+        orderMessagingService.sendOrderMessage(completedOrderId, clientId, acceptLanguage, acceptTimezone);
 
         return ResponseEntity.ok("Sent");
     }
