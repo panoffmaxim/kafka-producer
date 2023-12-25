@@ -1,5 +1,6 @@
 package com.epam.laboratory.kafkaproducer.service;
 
+import com.epam.laboratory.kafkaproducer.dto.OrderMessagingDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,12 +22,12 @@ public class OrderMessagingService {
     @Autowired
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void sendOrderMessage(String completedOrderId, String clientId, String acceptLanguage, String acceptTimezone) {
+    public void sendOrderMessage(OrderMessagingDto orderMessagingDto, String acceptLanguage, String acceptTimezone) {
         Map<String, Object> headers = new HashMap<>();
         headers.put("acceptLanguage", acceptLanguage);
         headers.put("acceptTimezone", acceptTimezone);
 
-        String messagePayload = String.format("%s|%s", completedOrderId, clientId);
+        String messagePayload = String.format("%s|%s", orderMessagingDto.getCompletedOrderId(), orderMessagingDto.getClientId());
 
         Message<String> message = MessageBuilder
                 .withPayload(messagePayload)
